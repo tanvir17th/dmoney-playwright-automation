@@ -1,6 +1,5 @@
 <div align="center">
 
-<img src="https://images.pexels.com/photos/34803988/pexels-photo-34803988.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="dMoney Automation Suite Banner" width="100%" />
 
 # 💸 dMoney Playwright E2E Automation Suite
 
@@ -27,23 +26,6 @@ Built with 🚀 Playwright + 🟦 TypeScript
 
 ---
 
-## 👤 Author
-
-<table>
-<tr>
-<td align="center">
-
-**Md Tanvir Ahamed**
-
-✉️ ahamedmdtanvir06@gmail.com
-
-*SDET | Automation Engineer*
-
-</td>
-</tr>
-</table>
-
----
 
 ## 📋 Table of Contents
 
@@ -154,7 +136,9 @@ npx playwright test tests/dmoney-journey.spec.ts -g "@regression" --headed
 
 ### 🎥 Video Demonstration
 
-> **Headed Automation Recording:** 📹 [Watch Full Video on Google Drive](https://drive.google.com/)
+> **Headed Automation Recording:** 📹 [Watch Full Video on Google Drive](https://drive.google.com/file/d/1PGOHjLJ0z_IfgEhFAssIQB0Om8TOgtv6/view?usp=sharing)
+
+>**Screenshot:** 🖼️ [Screenshots on Google Drive](https://drive.google.com/file/d/1PGOHjLJ0z_IfgEhFAssIQB0Om8TOgtv6/view?usp=sharing)
 
 ---
 
