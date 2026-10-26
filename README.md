@@ -1,59 +1,132 @@
-# dMoney Playwright E2E Automation Suite
+<div align="center">
 
-Comprehensive End-to-End (E2E) automation test suite for the **dMoney Web Portal**, built using Playwright and TypeScript. This suite covers critical functional flows including user registration, admin activation, deposits, Cash In, OTP verification, statement earthing, and password resets—incorporating actual Gmail IMAP automation for verifying dynamic OTPs and reset links.
+<img src="https://images.pexels.com/photos/34803988/pexels-photo-34803988.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="dMoney Automation Suite Banner" width="100%" />
 
+# 💸 dMoney Playwright E2E Automation Suite
 
-**Full Test Execution Video Recording:** [Watch on Google Drive](https://drive.google.com/file/d/1PGOHjLJ0z_IfgEhFAssIQB0Om8TOgtv6/view?usp=sharing)
+**Comprehensive End-to-End (E2E) automation test suite for the dMoney Web Portal**
 
-**Full Test Screenshots Folder:** [View on Google Drive](https://drive.google.com/drive/folders/1qEuH8lYWR-X2_R7gCJo0N58sEz5HhDXN?usp=sharing)
+Built with 🚀 Playwright + 🟦 TypeScript
 
-## Project Overview
+</div>
+
+---
+
+> 📌 This suite covers critical functional flows including user registration, admin activation, deposits, Cash In, OTP verification, statement earth, and password resets—incorporating actual **Gmail IMAP automation** for verifying dynamic OTPs and reset links.
+
+<div align="center">
+
+### 🎬 Demo & Results
+
+[![📹 Watch Full Execution Video](https://img.shields.io/badge/📹_Full_Execution_Video-Google_Drive-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://drive.google.com/file/d/1PGOHjLJ0z_IfgEhFAssIQB0Om8TOgtv6/view?usp=sharing)
+[![🖼️ View Test Screenshots](https://img.shields.io/badge/🖼️_Test_Screenshots-Google_Drive-34A853?style=for-the-badge&logo=googlephotos&logoColor=white)](https://drive.google.com/drive/folders/1qEuH8lYWR-X2_R7gCJo0N58sEz5HhDXN?usp=sharing)
+[![✅ Smoke Tests](https://img.shields.io/badge/✅_Smoke_Tests-Passed_100%25-22C55E?style=for-the-badge)]()
+[![✅ Regression Tests](https://img.shields.io/badge/✅_Regression_Tests-Passed_100%25-22C55E?style=for-the-badge)]()
+
+</div>
+
+---
+
+## 👤 Author
+
+<table>
+<tr>
+<td align="center">
+
+**Md Tanvir Ahamed**
+
+✉️ ahamedmdtanvir06@gmail.com
+
+*SDET | Automation Engineer*
+
+</td>
+</tr>
+</table>
+
+---
+
+## 📋 Table of Contents
+
+- [🔍 Project Overview](#-project-overview)
+- [🛠️ Technology Stack](#️-technology-stack)
+- [⚙️ Prerequisites & Setup](#️-prerequisites--setup)
+- [🏃 Running the Tests](#-running-the-tests)
+- [📊 Test Execution Results](#-test-execution-results)
+- [🗂️ Project Structure](#️-project-structure)
+- [🚫 GitIgnore & Organization](#-gitignore--organization)
+
+---
+
+## 🔍 Project Overview
+
+<div align="center">
+
+<img src="https://images.pexels.com/photos/6406691/pexels-photo-6406691.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Digital Wallet - dMoney Portal" width="80%" />
+
+</div>
 
 This automation framework demonstrates a fully automated SDET capability from end-to-end:
 
-- **User Onboarding:** Dynamically registers Customer and Agent accounts with unique emails, phones, and NIDs.
-- **Admin Activation:** Logs in as Admin, filters/searches for pending accounts, and activates them.
-- **System Deposit:** Logs in as System account and funds the Agent account.
-- **Gmail IMAP OTP Verification:** Connects to Gmail via IMAP after Agent login to fetch and fill the live 4-digit OTP.
-- **Cash In Transaction:** Agent performs Cash In to the Customer account.
-- **Self Statements & CSV Export:** Filters statements by date range and exports the transaction table to a CSV file.
-- **Password Reset Flow:** Triggers password reset, fetches the reset link from Gmail via IMAP, updates the password, and verifies login with new vs. wrong credentials.
+| # | Flow | Description |
+|---|------|-------------|
+| 🧑‍💼 | **User Onboarding** | Dynamically registers Customer and Agent accounts with unique emails, phones, and NIDs. |
+| 🔐 | **Admin Activation** | Logs in as Admin, filters/searches for pending accounts, and activates them. |
+| 💰 | **System Deposit** | Logs in as System account and funds the Agent account. |
+| 📧 | **Gmail IMAP OTP Verification** | Connects to Gmail via IMAP after Agent login to fetch and fill the live 4-digit OTP. |
+| 💵 | **Cash In Transaction** | Agent performs Cash In to the Customer account. |
+| 📄 | **Self Statements & CSV Export** | Filters statements by date range and exports the transaction table to a CSV file. |
+| 🔑 | **Password Reset Flow** | Triggers password reset, fetches the reset link from Gmail via IMAP, updates the password, and verifies login with new vs. wrong credentials. |
 
-## Technology Stack
+---
 
-- **Test Harness:** Playwright (TypeScript)
-- **Language:** Node.js (v18+)
-- **EMAIL/IMAP Library:** imap-simple, mailparser
-- **Environment Management:** dotenv
+## 🛠️ Technology Stack
 
-## Prerequisites & Setup
+<div align="center">
 
-### Clone the Repository:
+| Tool | Purpose |
+|------|---------|
+| ![Playwright](https://img.shields.io/badge/Playwright-Test_Harness-2EAD33?style=flat-square&logo=playwright&logoColor=white) | Test Harness (TypeScript) |
+| ![Node.js](https://img.shields.io/badge/Node.js-v18+-339933?style=flat-square&logo=node.js&logoColor=white) | Runtime Language |
+| ![IMAP](https://img.shields.io/badge/imap--simple-IMAP_Library-0066CC?style=flat-square&logo=gmail&logoColor=white) | Gmail IMAP + mailparser |
+| ![dotenv](https://img.shields.io/badge/dotenv-Env_Management-8A6900?style=flat-square&logo=dotenv&logoColor=white) | Environment Variables |
+
+</div>
+
+---
+
+## ⚙️ Prerequisites & Setup
+
+### 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/dmoney-playwright-automation.git
 cd dmoney-playwright-automation
 ```
 
-### Install Dependencies:
+### 2️⃣ Install Dependencies
 
 ```bash
 npm install
 npx playwright install
 ```
 
-### Configure Environment Variables:
+### 3️⃣ Configure Environment Variables
 
 Create a `.env` file in the root directory:
 
 ```env
-GMAIL_USER=ahamedmdtanvir06+11@gmail.com
-GMAIL_APP_PASSWORD=kktcnscgshkmkanw
+# Use the base Gmail account that receives mail for the generated +tag aliases.
+GMAIL_USER=your.base.account@gmail.com
+
+# Create a Google app password and keep the real value in the ignored .env file.
+GMAIL_APP_PASSWORD=your-16-character-app-password
 ```
 
-## Running the Tests
+---
 
-### 1. Smoke Test Suite (Positive Flows Only)
+## 🏃 Running the Tests
+
+### 🟢 Smoke Test Suite (Positive Flows Only)
 
 Contains only critical positive test cases:
 
@@ -61,46 +134,68 @@ Contains only critical positive test cases:
 npx playwright test tests/dmoney-journey.spec.ts -g "@smoke" --headed
 ```
 
-### 2. Regression Test Suite (Full End-to-End Suite)
+### 🔁 Regression Test Suite (Full End-to-End Suite)
 
 ```bash
 npx playwright test tests/dmoney-journey.spec.ts -g "@regression" --headed
 ```
 
-## Test Execution Results & Screenshots
+---
 
-### Smoke Test Result
+## 📊 Test Execution Results
 
-**Status:** Passed. Smoke test suite passing 100% positive flows (registration, activation, system deposit, IMAP OTP fetch, Cash In, and statement export).
+### 🟢 Smoke Test Result
 
-### Regression Test Result
+> **Status:** ✅ **Passed** — Smoke test suite passing 100% positive flows (registration, activation, system deposit, IMAP OTP fetch, Cash In, and statement export).
 
-**Status:** Passed. Complete Regression suite covering all 20 validations including negative password checks, IMAP password reset links, and post-reset authentication.
+### 🔁 Regression Test Result
 
-### Video Demonstration
+> **Status:** ✅ **Passed** — Complete Regression suite covering all **20 validations** including negative password checks, IMAP password reset links, and post-reset authentication.
 
-**Headed Automation Recording:** [Watch Full Video on Google Drive](https://drive.google.com/)
+### 🎥 Video Demonstration
 
-## GitIgnore & Project Organization
-
-The following necessary files and folders are ignored via `.gitignore`:
-
-- `node_modules/`
-- `test-results/`
-- `playwright-report/`
-- `blob-report/`
-- `.env`
-- Generated `*.csv` files
-
-## Project Structure
-
-- `tests/dmoney-journey.spec.ts`: Main E2E test suite
-- `playwright.config.ts`: Playwright configuration
-- `.env`: Local environment variables (not committed)
-- `README.md`: Project documentation
+> **Headed Automation Recording:** 📹 [Watch Full Video on Google Drive](https://drive.google.com/)
 
 ---
 
-**Author:** Md Tanvir Ahamed
+## 🗂️ Project Structure
 
-**Email:** ahamedmdtanvir06@gmail.com
+```
+📦 dmoney-playwright-automation
+├── 📂 tests/
+│   └── 📄 dmoney-journey.spec.ts    # Main E2E test suite
+├── 📄 playwright.config.ts          # Playwright configuration
+├── 📄 .env                           # Local environment variables (not committed)
+└── 📄 README.md                      # Project documentation
+```
+
+---
+
+## 🚫 GitIgnore & Organization
+
+The following necessary files and folders are ignored via `.gitignore`:
+
+| Path | Description |
+|------|-------------|
+| 📁 `node_modules/` | Installed dependencies |
+| 📁 `test-results/` | Raw test artifacts |
+| 📁 `playwright-report/` | HTML test report |
+| 📁 `blob-report/` | Blob report output |
+| 📄 `.env` | Local environment variables |
+| 📄 `*.csv` | Generated CSV exports |
+
+---
+
+<div align="center">
+
+### 👤 Author
+
+**Md Tanvir Ahamed**
+
+✉️ [ahamedmdtanvir06@gmail.com](mailto:ahamedmdtanvir06@gmail.com)
+
+---
+
+*Built with ❤️, 🚀 Playwright, and 🟦 TypeScript*
+
+</div>
