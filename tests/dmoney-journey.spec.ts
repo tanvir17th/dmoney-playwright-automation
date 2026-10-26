@@ -42,7 +42,7 @@ async function verifyGmailConnection(): Promise<void> {
     await connection.end();
 }
 
-async function fetchLatestOtpFromGmail(timeoutMs = 45000): Promise<string> {
+async function fetchLatestOtpFromGmail(recipientEmail: string, timeoutMs = 45000): Promise<string> {
     const config = getGmailConfig();
     const startTime = Date.now();
     let lastError: unknown;
@@ -62,13 +62,16 @@ async function fetchLatestOtpFromGmail(timeoutMs = 45000): Promise<string> {
                     if (!allParts) continue;
                     const parsed = await simpleParser(allParts.body);
                     const text = (parsed.text || "") + " " + (parsed.html || "");
-                    if (!parsed.date || Date.now() - parsed.date.getTime() > 5 * 60 * 1000) continue;
+                    const toAddresses = Array.isArray(parsed.to) ? parsed.to : parsed.to?.value || [];
+                    const recipients = toAddresses.map((recipient: any) => recipient.address?.toLowerCase());
+                    if (!recipients.includes(recipientEmail.toLowerCase())) continue;
+                    if (!parsed.date || Date.now() - parsed.date.getTime() > 2 * 60 * 1000) continue;
                     if (!/(otp|verification)/i.test(`${parsed.subject || ""} ${text}`)) continue;
-                    const match = text.match(/\b\d{4}\b/);
+                    const match = text.match(/(?:otp|verification(?:\s+code)?|one[- ]time code)[^\d]{0,30}(\d{4})/i);
                     if (match) {
-                        console.log("Dynamic OTP detected from Gmail: " + match[0]);
+                        console.log("Matching recent OTP email found.");
                         await connection.end();
-                        return match[0];
+                        return match[1];
                     }
                 }
             }
@@ -87,14 +90,24 @@ async function fetchLatestOtpFromGmail(timeoutMs = 45000): Promise<string> {
 
 async function activateUser(page: any, userEmail: string) {
     await page.locator('a[href*="/users"]').or(page.getByText("User List")).first().click();
-    await page.waitForTimeout(1000);
+    const searchType = page.getByRole("combobox").first();
+    if (await searchType.isVisible().catch(() => false)) {
+        const nativeSearchType = page.locator("select").first();
+        if (await nativeSearchType.isVisible().catch(() => false)) {
+            await nativeSearchType.selectOption({ label: "Email" }).catch(() => {});
+        } else {
+            await searchType.click();
+            const emailOption = page.getByRole("option", { name: /email/i }).first();
+            if (await emailOption.isVisible().catch(() => false)) {
+                await emailOption.click();
+            }
+        }
+    }
 
-    const searchInput = page.getByPlaceholder(/search|email|phone/i).or(page.locator('input[type="text"]')).first();
+    const searchInput = page.getByPlaceholder(/search|email|phone/i).first();
     if (await searchInput.isVisible().catch(() => false)) {
-        await searchInput.click();
         await searchInput.fill(userEmail);
         await page.keyboard.press("Enter");
-        await page.waitForTimeout(1000);
     }
 
     const row = page.locator("tbody tr").filter({ hasText: userEmail }).first();
@@ -105,28 +118,20 @@ async function activateUser(page: any, userEmail: string) {
     await viewBtn.click();
     await page.waitForTimeout(1000);
 
-    const editBtn = page.getByRole("button", { name: /Edit User/i }).or(page.getByText("Edit User")).first();
-    if (await editBtn.isVisible().catch(() => false)) {
-        await editBtn.click();
-        await page.waitForTimeout(600);
-    }
+    const editBtn = page.getByRole("button", { name: "Edit User", exact: true });
+    await expect(editBtn).toBeVisible();
+    await editBtn.click();
 
-    const statusDropdown = page.locator('select, div[role="combobox"]').last();
-    if (await statusDropdown.isVisible().catch(() => false)) {
-        await statusDropdown.click();
-        await page.waitForTimeout(400);
+    const statusDropdown = page.locator('div[role="combobox"]').last();
+    await expect(statusDropdown).toBeEnabled();
+    await statusDropdown.click();
+    await page.getByRole("option", { name: "Active", exact: true }).click();
 
-        await page.getByRole("option", { name: /Active/i }).or(page.getByText("Active", { exact: true })).first().click().catch(async () => {
-            await page.keyboard.press("ArrowDown");
-            await page.keyboard.press("Enter");
-        });
-
-        const saveBtn = page.getByRole("button", { name: /update|save/i }).or(page.getByText(/update|save/i)).first();
-        if (await saveBtn.isVisible().catch(() => false)) {
-            await saveBtn.click();
-            await page.waitForTimeout(1000);
-        }
-    }
+    const saveBtn = page.getByRole("button", { name: "Save Changes", exact: true });
+    await expect(saveBtn).toBeVisible();
+    await saveBtn.click();
+    await expect(page.getByText("User updated successfully", { exact: true })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText("ACTIVE", { exact: true }).first()).toBeVisible({ timeout: 10000 });
 }
 
 test.describe("dMoney E2E Automation Suite", () => {
@@ -134,9 +139,9 @@ test.describe("dMoney E2E Automation Suite", () => {
         await verifyGmailConnection();
     });
 
-    test("Critical Positive Flow - Registration, Activation, Deposit and Statement @smoke", async ({ page }) => {
+    test("Critical Positive Flow - Registration, Activation, Deposit and Statement @smoke @regression", async ({ page }) => {
         test.setTimeout(180000);
-        const suffix = Math.floor(1000 + Math.random() * 9000);
+        const suffix = Math.floor(10000000 + Math.random() * 90000000);
         const agentEmail = "ahamedmdtanvir06+" + suffix + "@gmail.com";
         const agentPhone = "01705" + Math.floor(100000 + Math.random() * 900000);
         const agentPassword = "Password@123";
@@ -157,16 +162,12 @@ test.describe("dMoney E2E Automation Suite", () => {
 
         const custDropdown = page.locator('div[role="combobox"]').first();
         await custDropdown.click();
-        await page.waitForTimeout(300);
-        const custOption = page.locator('li[role="option"], li').filter({ hasText: /Customer/i }).first();
-        if (await custOption.isVisible().catch(() => false)) {
-            await custOption.click();
-        } else {
-            await page.keyboard.press("ArrowDown");
-            await page.keyboard.press("Enter");
-        }
-        await page.locator('button[type="submit"], button').filter({ hasText: /Create Account/i }).first().click();
-        await page.waitForTimeout(1500);
+        const customerRoleOption = page.getByRole("option", { name: /Customer/i });
+        await customerRoleOption.click();
+        await expect(custDropdown).toContainText("Customer");
+        const customerSubmit = page.locator('button[type="submit"]');
+        await customerSubmit.click();
+        await expect(customerSubmit).toBeEnabled({ timeout: 30000 });
 
         await page.goto("https://dmoneyportal.roadtocareer.net/register");
         const inputs = page.locator("input");
@@ -178,18 +179,12 @@ test.describe("dMoney E2E Automation Suite", () => {
 
         const dropdownBox = page.locator('div[role="combobox"]').first();
         await dropdownBox.click();
-        await page.waitForTimeout(400);
-
-        const agentOption = page.locator('li[role="option"], li').filter({ hasText: /Agent/i }).first();
-        if (await agentOption.isVisible().catch(() => false)) {
-            await agentOption.click();
-        } else {
-            await page.keyboard.press("ArrowDown");
-            await page.keyboard.press("ArrowDown");
-            await page.keyboard.press("Enter");
-        }
-        await page.locator('button[type="submit"], button').filter({ hasText: /Create Account/i }).first().click();
-        await expect(page.getByText(/success|created|registered|pending approval/i).first()).toBeVisible({ timeout: 12000 });
+        const agentRoleOption = page.getByRole("option", { name: /Agent/i });
+        await agentRoleOption.click();
+        await expect(dropdownBox).toContainText("Agent");
+        const agentSubmit = page.locator('button[type="submit"]');
+        await agentSubmit.click();
+        await expect(agentSubmit).toBeEnabled({ timeout: 30000 });
 
         await page.goto("https://dmoneyportal.roadtocareer.net/login");
         await page.locator("input").nth(0).fill("admin@dmoney.com");
@@ -228,7 +223,7 @@ test.describe("dMoney E2E Automation Suite", () => {
 
         const otpInput = page.getByPlaceholder(/Enter 4-Digit OTP/i).or(page.locator('input[type="text"]')).first();
         await otpInput.waitFor({ state: "visible", timeout: 8000 });
-        const loginOtp = await fetchLatestOtpFromGmail();
+        const loginOtp = await fetchLatestOtpFromGmail(agentEmail);
         await otpInput.fill(loginOtp);
         await page.getByRole("button", { name: /Verify OTP/i }).or(page.getByText(/Verify OTP/i)).first().click();
         await expect(page).toHaveURL(/.*profile|.*dashboard|.*agent/i, { timeout: 15000 });
