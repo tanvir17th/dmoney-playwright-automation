@@ -170,6 +170,7 @@ Run both suites with `npm test`, and open the HTML report with `npm run report`.
 ### HTML Test Report
 ![Smoke test ](./screenshots/smoke.png)
 ![Regression test](./screenshots/regression.png)
+![Regression test](./screenshots/regression2.png)
 
 ---
 
