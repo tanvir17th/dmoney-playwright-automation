@@ -1,1 +1,9 @@
+node_modules/
+test-results/
+playwright-report/
+.DS_Store
+/blob-report/
+/playwright/.cache/
+/exports/
+*.csv
 .env

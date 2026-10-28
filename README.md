@@ -11,7 +11,7 @@ Built with 🚀 Playwright + 🟦 TypeScript
 
 ---
 
-> 📌 This suite covers critical functional flows including user registration, admin activation, deposits, Cash In, OTP verification, statement earth, and password resets—incorporating actual **Gmail IMAP automation** for verifying dynamic OTPs and reset links.
+> 📌 This suite covers critical functional flows including user registration, admin activation, deposits, Cash In, OTP verification, statement export, and password resets—incorporating actual **Gmail IMAP automation** for verifying dynamic OTPs and reset links.
 
 <div align="center">
 
@@ -104,23 +104,47 @@ GMAIL_USER=your.base.account@gmail.com
 GMAIL_APP_PASSWORD=your-16-character-app-password
 ```
 
+Optional overrides (`BASE_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `SYSTEM_EMAIL`, `SYSTEM_PASSWORD`) are listed in `.env.example`; they default to the public dMoney practice values.
+
 ---
 
 ## 🏃 Running the Tests
 
-### 🟢 Smoke Test Suite (Positive Flows Only)
+Suites are defined as Playwright projects in `playwright.config.ts` and selected by tag.
 
-Contains only critical positive test cases:
-
-```bash
-npx playwright test tests/dmoney-journey.spec.ts -g "@smoke" --headed
-```
-
-### 🔁 Regression Test Suite (Full End-to-End Suite)
+### 🟢 Smoke Test Suite (`@smoke`, positive flows only)
 
 ```bash
-npx playwright test tests/dmoney-journey.spec.ts -g "@regression" --headed
+npm run test:smoke            # or: npx playwright test --project=smoke
+npm run test:smoke:headed     # or: npx playwright test tests/smoke.spec.ts --headed
 ```
+
+| # | Test |
+|---|------|
+| 1 | Customer and Agent register successfully (API 201, success toast, redirect to login, `pending` status) |
+| 2 | Admin finds both users as **PENDING**, activates them, and the **Active** status persists after a page reload |
+| 3 | Admin deposits to SYSTEM (success message + transaction ID) |
+| 4 | SYSTEM deposits 2000 Tk to the Agent; the transaction is verified in the SYSTEM self statement |
+| 5 | Agent logs in with the Gmail OTP and the balance is exactly **2000.00** Tk |
+| 6 | Agent Cash In 500 Tk to the Customer; balance becomes **1512.50** Tk (2.5% commission) and the transaction appears in the Agent self statement |
+| 7 | Self statement table is extracted, verified, and saved to `exports/self_statement_<YYYY-MM-DD>.csv` |
+| 8 | Agent resets the password through the emailed link and logs in with the new password |
+
+### 🔁 Regression Test Suite (`@regression`, complete suite)
+
+```bash
+npm run test:regression       # or: npx playwright test --project=regression
+npm run test:regression:headed  # or: npx playwright test tests/regression.spec.ts --headed
+```
+
+Runs the full journey above plus the negative checks:
+
+- Registration rejected for empty fields, a non-Gmail address, and an already registered email
+- Agent login rejected with a wrong password and with an invalid OTP
+- Cash In above the Agent balance rejected with **Insufficient balance**, balance unchanged
+- After the password reset, the **old password is rejected** and the new password works
+
+Run both suites with `npm test`, and open the HTML report with `npm run report`.
 
 ---
 
@@ -128,17 +152,27 @@ npx playwright test tests/dmoney-journey.spec.ts -g "@regression" --headed
 
 ### 🟢 Smoke Test Result
 
-> **Status:** ✅ **Passed** — Smoke test suite passing 100% positive flows (registration, activation, system deposit, IMAP OTP fetch, Cash In, and statement export).
+> **Status:** ✅ **Passed**: 8/8 smoke tests.
 
 ### 🔁 Regression Test Result
 
-> **Status:** ✅ **Passed** — Complete Regression suite covering all **20 validations** including negative password checks, IMAP password reset links, and post-reset authentication.
+> **Status:** ✅ **Passed**: 14/14 regression tests.
 
 ### 🎥 Video Demonstration
 
 > **Headed Automation Recording:** 📹 [Watch Full Video on Google Drive](https://drive.google.com/file/d/1PGOHjLJ0z_IfgEhFAssIQB0Om8TOgtv6/view?usp=sharing)
 
->**Screenshot:** 🖼️ [Screenshots on Google Drive](https://drive.google.com/file/d/1PGOHjLJ0z_IfgEhFAssIQB0Om8TOgtv6/view?usp=sharing)
+## 🖼 Verification Screenshots
+
+
+### 🎥 Video Demonstration
+
+> **Headed Automation Recording:** 📹 [Watch Full Video on Google Drive](https://drive.google.com/file/d/1lyzTW00HS7Ux3JW2U6eJDCXdyx-5kB12/view?usp=sharing)
+
+
+### HTML Test Report
+![Smoke test ](./screenshots/smoke.png)
+![Regression test](./screenshots/regression.png)
 
 ---
 
@@ -147,10 +181,25 @@ npx playwright test tests/dmoney-journey.spec.ts -g "@regression" --headed
 ```
 📦 dmoney-playwright-automation
 ├── 📂 tests/
-│   └── 📄 dmoney-journey.spec.ts    # Main E2E test suite
-├── 📄 playwright.config.ts          # Playwright configuration
-├── 📄 .env                           # Local environment variables (not committed)
-└── 📄 README.md                      # Project documentation
+│   ├── 📄 smoke.spec.ts                     # @smoke: positive critical flows
+│   └── 📄 regression.spec.ts                # @regression: full journey + negative cases
+├── 📂 flows/
+│   └── 📄 journey.ts                        # Shared journey steps and assertions used by both suites
+├── 📂 pages/                                # Page objects (role/label-based locators)
+│   ├── 📄 BasePage.ts
+│   ├── 📄 RegisterPage.ts  📄 LoginPage.ts  📄 ProfilePage.ts
+│   ├── 📄 UserListPage.ts  📄 UserDetailsPage.ts  📄 AdminDepositPage.ts
+│   ├── 📄 CashInPage.ts    📄 SelfStatementPage.ts
+│   └── 📄 ForgotPasswordPage.ts  📄 ResetPasswordPage.ts
+├── 📂 utils/
+│   ├── 📄 env.ts                            # .env loading and defaults
+│   ├── 📄 gmail.ts                          # IMAP helpers: OTP and reset-link lookup
+│   ├── 📄 testData.ts                       # Unique users, amounts, money formatting
+│   └── 📄 files.ts                          # Dates and CSV writer
+├── 📂 exports/                              # Generated self_statement_<date>.csv (ignored)
+├── 📄 playwright.config.ts                  # Playwright configuration (smoke / regression projects)
+├── 📄 .env.example                          # Template for the local .env
+└── 📄 README.md                             # Project documentation
 ```
 
 ---
@@ -166,7 +215,7 @@ The following necessary files and folders are ignored via `.gitignore`:
 | 📁 `playwright-report/` | HTML test report |
 | 📁 `blob-report/` | Blob report output |
 | 📄 `.env` | Local environment variables |
-| 📄 `*.csv` | Generated CSV exports |
+| 📁 `exports/`, 📄 `*.csv` | Generated self statement CSV exports |
 
 ---
 
@@ -176,7 +225,7 @@ The following necessary files and folders are ignored via `.gitignore`:
 
 **Md Tanvir Ahamed**
 
-✉️ [ahamedmdtanvir06@gmail.com](mailto:ahamedmdtanvir06@gmail.com)
+✉️ [ahamedtanvir93@gmail.com](mailto:ahamedtanvir93@gmail.com)
 
 ---
 
