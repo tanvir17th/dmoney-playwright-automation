@@ -17,7 +17,7 @@ Built with 🚀 Playwright + 🟦 TypeScript
 
 ### 🎬 Demo & Results
 
-[![📹 Watch Full Execution Video](https://img.shields.io/badge/📹_Full_Execution_Video-Google_Drive-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://drive.google.com/file/d/1PGOHjLJ0z_IfgEhFAssIQB0Om8TOgtv6/view?usp=sharing)
+[![📹 Watch Full Execution Video](https://img.shields.io/badge/📹_Full_Execution_Video-Google_Drive-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://drive.google.com/file/d/1lyzTW00HS7Ux3JW2U6eJDCXdyx-5kB12/view?usp=sharing)
 [![🖼️ View Test Screenshots](https://img.shields.io/badge/🖼️_Test_Screenshots-Google_Drive-34A853?style=for-the-badge&logo=googlephotos&logoColor=white)](https://drive.google.com/drive/folders/1qEuH8lYWR-X2_R7gCJo0N58sEz5HhDXN?usp=sharing)
 [![✅ Smoke Tests](https://img.shields.io/badge/✅_Smoke_Tests-Passed_100%25-22C55E?style=for-the-badge)]()
 [![✅ Regression Tests](https://img.shields.io/badge/✅_Regression_Tests-Passed_100%25-22C55E?style=for-the-badge)]()
@@ -158,9 +158,6 @@ Run both suites with `npm test`, and open the HTML report with `npm run report`.
 
 > **Status:** ✅ **Passed**: 14/14 regression tests.
 
-### 🎥 Video Demonstration
-
-> **Headed Automation Recording:** 📹 [Watch Full Video on Google Drive](https://drive.google.com/file/d/1PGOHjLJ0z_IfgEhFAssIQB0Om8TOgtv6/view?usp=sharing)
 
 ## 🖼 Verification Screenshots
 
